@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Smart Health System</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Register Page -->
+    <string name="titleSignUp">Sign Up</string>
+    <string name="titleHaveAccount">Already have an account? Login</string>
+    <string name="emailHint">Email Address</string>
+    <string name="titleUsername">Username</string>
+    <string name="titleConfirmPassword">Confirm Password</string>
+
+    <!-- Login Page -->
+    <string name="titleLogin">Login</string>
+    <string name="titleEmail">Email</string>
+    <string name="titlePassword">Password</string>
+    <string name="usernameHint">Username</string>
+    <string name="titleForgotPassword">Forgot Password?</string>
+    <string name="titleNoAccount">Does not have an account? Sign Up</string>
+
+    <!-- Skin Cancer Detection Page -->
+    <string name="titleDetection">Detection</string>
+    <string name="titleUploadImage">Upload Image</string>
+    <string name="titleUseCamera">Use Camera</string>
+    <string name="titleDetectBtn">Detect Now</string>
+
+    <!-- Google Maps Page -->
+    <string name="titleMaps">Maps</string>
+</resources>

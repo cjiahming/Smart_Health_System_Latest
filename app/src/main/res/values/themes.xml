@@ -1,0 +1,25 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.SmartHealthSystem" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/orange</item>
+        <item name="colorPrimaryVariant">@color/orange</item>
+        <item name="android:statusBarColor">@color/orange</item>
+    </style>
+
+    <style name="Theme.SmartHealthSystem" parent="Base.Theme.SmartHealthSystem" />
+
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/darkOrange</item>
+    </style>
+
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/orange</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/medicallogo</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.SmartHealthSystem</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowBackground">@color/orange</item>
+    </style>
+</resources>

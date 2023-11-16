@@ -3,16 +3,18 @@ package com.example.smarthealthsystem
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smarthealthsystem.databinding.ActivityCrudMainBinding
-import com.example.smarthealthsystem.databinding.ActivityMainBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.*
 
 class ActivityCrudMain : AppCompatActivity() {
 
     private lateinit var binding: ActivityCrudMainBinding
-    private lateinit var db: UserDatabaseHelper
+    private lateinit var databaseReference: DatabaseReference
+    private lateinit var auth: FirebaseAuth
+
     private lateinit var usersAdapter: UsersAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,8 +22,10 @@ class ActivityCrudMain : AppCompatActivity() {
         binding = ActivityCrudMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        db = UserDatabaseHelper(this)
-        usersAdapter = UsersAdapter(db.getAllUser(), this)
+        auth = FirebaseAuth.getInstance()
+        databaseReference = FirebaseDatabase.getInstance().getReference("User Information")
+
+        usersAdapter = UsersAdapter(emptyList(), databaseReference)
 
         binding.usersRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.usersRecyclerView.adapter = usersAdapter
@@ -31,10 +35,38 @@ class ActivityCrudMain : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.adminLogOutBtn.setOnClickListener {
+            signOut()
+            val intent = Intent(this, ActivityLogin::class.java)
+            startActivity(intent)
+            finish() // Close the current activity
+        }
+
     }
 
     override fun onResume() {
         super.onResume()
-        usersAdapter.refreshData(db.getAllUser())
+        readData()
+    }
+
+    private fun readData() {
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userList = mutableListOf<UserData>()
+                for (userSnapshot in snapshot.children) {
+                    val userData = userSnapshot.getValue(UserData::class.java)
+                    userData?.let { userList.add(it) }
+                }
+                usersAdapter.refreshData(userList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error
+            }
+        })
+    }
+
+    private fun signOut() {
+        FirebaseAuth.getInstance().signOut()
     }
 }

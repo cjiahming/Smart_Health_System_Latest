@@ -30,11 +30,25 @@
         android:layout_marginEnd="6dp"/>
 
     <EditText
-        android:id="@+id/updateTitleEnterUsername"
+        android:id="@+id/disabledUserIDText"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_below="@id/editUserHeading"
         android:layout_marginTop="50dp"
+        android:background="@drawable/orange_border"
+        android:hint="User ID"
+        android:focusable="false"
+        android:fontFamily="@font/poppins"
+        android:maxLines="1"
+        android:padding="12dp"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/updateTitleEnterUsername"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/editUserHeading"
+        android:layout_marginTop="140dp"
         android:background="@drawable/orange_border"
         android:hint="Enter Username"
         android:fontFamily="@font/poppins"
@@ -47,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_below="@id/editUserHeading"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="230dp"
         android:background="@drawable/orange_border"
         android:hint="Enter Email Address"
         android:inputType="textEmailAddress"
@@ -61,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_below="@id/editUserHeading"
-        android:layout_marginTop="230dp"
+        android:layout_marginTop="320dp"
         android:background="@drawable/orange_border"
         android:hint="Enter Password"
         android:inputType="textPassword"
@@ -76,7 +90,7 @@
         android:layout_height="60dp"
         android:layout_below="@id/editUserHeading"
         android:layout_centerInParent="true"
-        android:layout_marginTop="320dp"
+        android:layout_marginTop="410dp"
         android:background="@drawable/orange_border"
         android:fontFamily="@font/poppins"
         android:hint="Re-Enter Password"
@@ -92,7 +106,7 @@
         android:layout_below="@+id/updateTitleConfirmPassword"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="180dp" />
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="80dp" />
 
 </RelativeLayout>

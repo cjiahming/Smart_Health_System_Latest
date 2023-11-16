@@ -1,5 +1,6 @@
 package com.example.smarthealthsystem
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,19 +9,19 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import com.example.smarthealthsystem.databinding.ActivityAddUserBinding
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class AddUserActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddUserBinding
-    private lateinit var db: UserDatabaseHelper
+    private lateinit var databaseReference: DatabaseReference
     private lateinit var spinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        db = UserDatabaseHelper(this)
 
         spinner = binding.spinnerRole
         val listItems = listOf("User", "Admin")
@@ -40,15 +41,29 @@ class AddUserActivity : AppCompatActivity() {
         }
 
         binding.saveBtn.setOnClickListener {
+            val userID = "U005"
             val username = binding.titleEnterUsername.text.toString()
             val email = binding.titleEnterEmail.text.toString()
             val password = binding.titleEnterPassword.text.toString()
             val confirmPassword = binding.titleConfirmPassword.text.toString()
             val role = binding.spinnerRole.selectedItem.toString()
-            val user = User(0, username, email, password, role)
-            db.addUser(user)
-            finish()
-            Toast.makeText(this, "User Added!", Toast.LENGTH_SHORT).show()
+
+            databaseReference = FirebaseDatabase.getInstance().getReference("User Information")
+            val userData = UserData(userID, username, email, password, role)
+            databaseReference.child(userID).setValue(userData).addOnSuccessListener {
+                binding.titleEnterUsername.text.clear()
+                binding.titleEnterEmail.text.clear()
+                binding.titleEnterPassword.text.clear()
+                binding.titleConfirmPassword.text.clear()
+                binding.spinnerRole.selectedItem.equals(0)
+
+                Toast.makeText(this, "User Added!", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@AddUserActivity, ActivityCrudMain::class.java)
+                startActivity(intent)
+                finish()
+            }.addOnFailureListener {
+                Toast.makeText(this, "User Not Added!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

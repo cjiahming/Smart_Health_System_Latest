@@ -1,17 +1,19 @@
 package com.example.smarthealthsystem
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.fragment.app.Fragment
 import com.example.smarthealthsystem.databinding.ActivityLoginBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
 class ActivityLogin : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var databaseHelper: UserDatabaseHelper
+    private lateinit var firebaseDatabase: FirebaseDatabase
+    private lateinit var databaseReference: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,16 +21,17 @@ class ActivityLogin : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        databaseHelper = UserDatabaseHelper(this)
+        firebaseDatabase = FirebaseDatabase.getInstance()
+        databaseReference = FirebaseDatabase.getInstance().getReference("User Information")
 
         binding.btnLogin.setOnClickListener {
             val loginUsername = binding.editTextUsername.text.toString()
             val loginPassword = binding.editTextPassword.text.toString()
-            loginDatabase(loginUsername, loginPassword)
+            loginFunction(loginUsername, loginPassword)
         }
 
         binding.textViewForgotPassword.setOnClickListener {
-
+            // Implement password reset logic if needed
         }
 
         binding.textViewNoAccount.setOnClickListener {
@@ -38,28 +41,39 @@ class ActivityLogin : AppCompatActivity() {
         }
     }
 
-    private fun loginDatabase(username: String, password: String){
-        val userExists = databaseHelper.readUser(username, password)
-        val userRole = databaseHelper.getUserByUsername(username)
+    private fun loginFunction(username: String, password: String) {
+        databaseReference.orderByChild("username").equalTo(username)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (userSnapshot in dataSnapshot.children) {
+                            val userData = userSnapshot.getValue(UserData::class.java)
 
-        if (userExists && (userRole.role.toString() == "Admin")){
-            Toast.makeText(this, "Admin", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, ActivityCrudMain::class.java)
-            startActivity(intent)
-            finish()
-        }
-        else if(userExists && (userRole.role.toString() == "User")){
-            Toast.makeText(this, "User", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-        else{
-            Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
-        }
-    }
+                            if (userData != null && userData.password == password) {
+                                // Check user role and redirect accordingly
+                                if (userData.role == "User") {
+                                    Toast.makeText(this@ActivityLogin, "Login Successful", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this@ActivityLogin, MainActivity::class.java)
+                                    intent.putExtra("userData", userData)
+                                    startActivity(intent)
+                                    finish()
+                                    return
+                                } else if (userData.role == "Admin") {
+                                    Toast.makeText(this@ActivityLogin, "Login Successful", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this@ActivityLogin, ActivityCrudMain::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    return
+                                }
+                            }
+                        }
+                    }
+                    Toast.makeText(this@ActivityLogin, "Login Failed", Toast.LENGTH_SHORT).show()
+                }
 
-    private fun replaceFragment(fragment: Fragment){
-        supportFragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit()
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Toast.makeText(this@ActivityLogin, "Database Error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 }

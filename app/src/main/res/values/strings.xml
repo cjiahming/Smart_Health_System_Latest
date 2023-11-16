@@ -26,4 +26,11 @@
 
     <!-- Google Maps Page -->
     <string name="titleMaps">Maps</string>
+
+    <!-- Profile Page -->
+    <string name="profile">Profile</string>
+    <string name="logOut">Log Out</string>
+
+    <!-- Edit Profile Page -->
+    <string name="editProfileTitle">Edit Profile</string>
 </resources>

@@ -1,10 +1,6 @@
 package com.example.smarthealthsystem
 
-import android.content.Context
 import android.content.Intent
-import android.media.Image
-import android.provider.ContactsContract
-import android.service.autofill.UserData
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +8,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import org.w3c.dom.Text
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
-class UsersAdapter(private var users: List<User>, context: Context) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+class UsersAdapter(private var users: List<UserData>, private val databaseReference: DatabaseReference) :
+    RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
 
-    private val db: UserDatabaseHelper = UserDatabaseHelper(context)
-
-    class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userIdTextView = itemView.findViewById<TextView>(R.id.userIdTextView)
         val usernameTextView = itemView.findViewById<TextView>(R.id.usernameTextView)
         val emailTextView = itemView.findViewById<TextView>(R.id.emailTextView)
@@ -44,20 +40,29 @@ class UsersAdapter(private var users: List<User>, context: Context) : RecyclerVi
         holder.roleTextVieww.text = "Role: ${user.role}"
 
         holder.updateBtn.setOnClickListener {
-            val intent = Intent(holder.itemView.context, UpdateUserActivity::class.java).apply{
+            val intent = Intent(holder.itemView.context, UpdateUserActivity::class.java).apply {
                 putExtra("user_id", user.userID)
             }
             holder.itemView.context.startActivity(intent)
         }
 
         holder.deleteBtn.setOnClickListener {
-            db.deleteUser(user.userID)
-            refreshData(db.getAllUser())
-            Toast.makeText(holder.itemView.context, "User Deleted!", Toast.LENGTH_SHORT).show()
+            val userKey = user.userID
+
+            // Remove the user from the Firebase Realtime Database
+            databaseReference.child(userKey.toString()).removeValue()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(holder.itemView.context, "User Deleted!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(holder.itemView.context, "Failed to delete user", Toast.LENGTH_SHORT).show()
+                    }
+                }
         }
+
     }
 
-    fun refreshData(newUsers: List<User>){
+    fun refreshData(newUsers: List<UserData>) {
         users = newUsers
         notifyDataSetChanged()
     }

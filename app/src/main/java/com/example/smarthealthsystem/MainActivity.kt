@@ -22,16 +22,9 @@ class MainActivity : AppCompatActivity() {
         Thread.sleep(3000)
         setContentView(R.layout.activity_main)
 
+        val userData = intent.getSerializableExtra("userData") as? UserData
+
         bottomNavigationView = findViewById(R.id.bottom_navigation)
-
-        val myButton = findViewById<Button>(R.id.buttonTest)
-        val textTest = findViewById<TextView>(R.id.helloTest)
-
-        myButton.setOnClickListener {
-            val intent = Intent(this, ActivityLogin::class.java)
-            startActivity(intent)
-            //replaceFragment(FragmentLogin())
-        }
 
         bottomNavigationView.setOnItemReselectedListener { menuItem ->
             when(menuItem.itemId){
@@ -44,7 +37,12 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.bottom_profile -> {
-                    replaceFragment(FragmentProfile())
+                    val fragmentProfile = FragmentProfile().apply {
+                        arguments = Bundle().apply {
+                            putSerializable("userData", userData)
+                        }
+                    }
+                    replaceFragment(fragmentProfile)
                     true
                 }
                 else -> false

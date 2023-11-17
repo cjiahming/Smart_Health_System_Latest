@@ -33,4 +33,8 @@
 
     <!-- Edit Profile Page -->
     <string name="editProfileTitle">Edit Profile</string>
+
+    <!-- Forgot Password Page -->
+    <string name="resetPasswordTitle">Reset Password</string>
+    <string name="instructionTitle">Enter your email and we will send you an e-mail verification shortly.</string>
 </resources>

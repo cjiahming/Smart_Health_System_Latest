@@ -31,7 +31,9 @@ class ActivityLogin : AppCompatActivity() {
         }
 
         binding.textViewForgotPassword.setOnClickListener {
-            // Implement password reset logic if needed
+            val intent = Intent(this, ActivityForgotPassword::class.java)
+            startActivity(intent)
+            finish()
         }
 
         binding.textViewNoAccount.setOnClickListener {
